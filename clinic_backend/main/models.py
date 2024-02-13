@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 import uuid
-
+from django.dispatch.dispatcher import receiver
+from django.db.models.signals import pre_delete
+import os
 
 
 
@@ -30,14 +32,22 @@ class Doctor(models.Model):
 
     @property
     def age(self):
+        if self.date_of_birth is None: return None
         today_date = datetime.date.today()
         time_delta = today_date - self.date_of_birth
         age = time_delta.days // 365
         return age
-        
 
     def __str__(self):
         return self.user.username
+
+
+@receiver(pre_delete, sender=Doctor)
+def delete_image(sender, instance, **kwargs):
+    # Before deleting the record, delete the associated image file
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
 
 
 class Patient(models.Model):
@@ -100,13 +110,54 @@ class Patient(models.Model):
         time_delta = today_date - self.date_of_birth
         age = time_delta.days // 365
         return age
-    @property
-    def full_name(self):
-        pass    
+
+    def get_full_name(self):
+        """
+        Return the first_name plus the last_name, with a space in between.
+        """
+        full_name = "%s %s" % (self.first_name, self.last_name)
+        return full_name.strip()   
 
     def __str__(self):
         return str(self.id)
 
 class Secretary(models.Model):
-    pass
 
+    class Meta:
+        verbose_name_plural = "Secretaries"
+
+    MALE = 'M'
+    FEMALE = 'F'
+    GENDER = {
+        MALE: 'Male',
+        FEMALE: 'Female',
+    }
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    gender = models.CharField(max_length =1, choices=GENDER, default=MALE)
+    address = models.CharField(max_length=255, null =True, blank =True)
+    education = models.TextField(null=True, blank =True)
+    experience = models.TextField(null=True, blank =True)
+    contact_number = models.CharField(max_length=20,null=True, blank =True)
+    date_of_birth = models.DateField(null=True, blank =True)
+    image = models.ImageField(upload_to='images/secretaries/',null=True, blank =True)
+    is_retired = models.BooleanField(default = False)
+    is_on_vacation = models.BooleanField(default = False)
+
+    @property
+    def age(self):
+        if self.date_of_birth is None: return None
+        today_date = datetime.date.today()
+        time_delta = today_date - self.date_of_birth
+        age = time_delta.days // 365
+        return age
+
+    def __str__(self):
+        return self.user.username
+
+
+@receiver(pre_delete, sender=Secretary)
+def delete_image(sender, instance, **kwargs):
+    # Before deleting the record, delete the associated image file
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)

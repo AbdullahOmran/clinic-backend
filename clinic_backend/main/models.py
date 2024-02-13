@@ -170,3 +170,31 @@ class Clinic(models.Model):
     city = models.CharField(max_length=255, null =True)
     state = models.CharField(max_length=255, null =True)
     contact_number = models.CharField(max_length=20,null=True)
+    doctor = models.ManyToManyField(Doctor)
+    Secretary = models.ManyToManyField(Secretary)
+
+class Appointment(models.Model):
+    PENDING= 'P'
+    ACCEPTED= 'A'
+    REJECTED= 'R'
+    SCHEDULED= 'S'
+    INSPECTION = 'I'
+    CONSULTATION = 'C'
+    TYPES={
+        INSPECTION:'New inspection',
+        CONSULTATION:'Consultation'
+    }
+    STATUS = {
+     PENDING: 'Pending',
+     ACCEPTED: 'Accepted',
+     REJECTED: 'Rejected',
+     SCHEDULED: 'Scheduled',
+    }
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
+    secretary = models.ForeignKey(Secretary, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL,null=True)
+    date = models.DateField(null=True)
+    time = models.TimeField(null=True)
+    status = models.CharField(max_length=255, default=SCHEDULED, choices=STATUS)
+    appointment_type = models.CharField(max_length=255, default=INSPECTION, choices=TYPES)
+    notes = models.TextField(null = True,blank=True)

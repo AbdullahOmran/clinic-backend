@@ -73,6 +73,8 @@ class Patient(models.Model):
      MARRIED:'Married',
     }
     id = models.UUIDField(default=uuid.uuid4,primary_key=True,editable=False)
+    first_name = models.CharField(max_length=255,null=True)
+    last_name = models.CharField(max_length=255,null=True)
     gender = models.CharField(max_length =1, choices=GENDER, default=MALE)
     address = models.CharField(max_length=255, null =True, blank =True)
     education = models.TextField(null=True, blank =True)
@@ -98,7 +100,9 @@ class Patient(models.Model):
         time_delta = today_date - self.date_of_birth
         age = time_delta.days // 365
         return age
-        
+    @property
+    def full_name(self):
+        pass    
 
     def __str__(self):
         return str(self.id)

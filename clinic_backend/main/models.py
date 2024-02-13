@@ -161,3 +161,12 @@ def delete_image(sender, instance, **kwargs):
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
+
+class Clinic(models.Model):
+    admin = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null =True)
+    address = models.CharField(max_length=255, null =True)
+    city = models.CharField(max_length=255, null =True)
+    state = models.CharField(max_length=255, null =True)
+    contact_number = models.CharField(max_length=20,null=True)

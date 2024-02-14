@@ -18,12 +18,12 @@ class Doctor(models.Model):
         MALE: 'Male',
         FEMALE: 'Female',
     }
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     gender = models.CharField(max_length =1, choices=GENDER, default=MALE)
     address = models.CharField(max_length=255, null =True, blank =True)
     education = models.TextField(null=True, blank =True)
     experience = models.TextField(null=True, blank =True)
-    specialization = models.CharField(max_length=255)
+    specialization = models.CharField(max_length=255,null=True)
     contact_number = models.CharField(max_length=20,null=True, blank =True)
     date_of_birth = models.DateField(null=True, blank =True)
     image = models.ImageField(upload_to='images/doctors/',null=True, blank =True)
@@ -164,7 +164,7 @@ def delete_image(sender, instance, **kwargs):
 
 
 class Clinic(models.Model):
-    admin = models.OneToOneField(User, on_delete=models.CASCADE)
+    admin = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=255, null =True)
     address = models.CharField(max_length=255, null =True)
     city = models.CharField(max_length=255, null =True)
@@ -221,3 +221,37 @@ class WorkingSchedule(models.Model):
     start_time = models.TimeField(null=True)
     end_time = models.TimeField(null=True)
     day = models.CharField(max_length=3,choices=DAYS,null=True)
+
+class Encounter(models.Model):
+    pass
+
+class Prescription(models.Model):
+    date = models.DateField(null=True)
+    encounter = models.OneToOneField(Encounter,null=True,on_delete=models.CASCADE)
+    width = models.PositiveIntegerField(default=210)
+    height = models.PositiveIntegerField(default=297)
+    background_image = models.ImageField(upload_to='images/prescriptions/',null=True,blank=True)
+class MedicationsStore(models.Model):
+    class Meta:
+        verbose_name = "medication"
+        verbose_name_plural = "Medications Store"
+    OTHER = '0'
+    TOPICAL = '1'
+    ORAL = '2'
+    ROUTES  = {
+        OTHER: 'Other',
+        ORAL: 'Oral',
+        TOPICAL: 'Topical',
+    }
+    name = models.CharField(max_length=255, null=True)
+    route = models.CharField(max_length=1, default=OTHER, choices=ROUTES)
+    image = models.ImageField(upload_to='images/medications/',null=True,blank=True)
+
+class Medication(models.Model):
+    medication = models.OneToOneField(MedicationsStore, on_delete=models.SET_NULL, null=True)
+    dosage = models.CharField(max_length=255,null=True)
+    frequency = models.CharField(max_length=255,null=True)
+    duration = models.CharField(max_length=255,null=True)
+
+class Treatment(models.Model):
+    pass

@@ -10,6 +10,7 @@ import os
 
 
 
+
 # Create your models here.
 class Doctor(models.Model):
     MALE = 'M'
@@ -223,7 +224,20 @@ class WorkingSchedule(models.Model):
     day = models.CharField(max_length=3,choices=DAYS,null=True)
 
 class Encounter(models.Model):
-    pass
+    INSPECTION = 'I'
+    CONSULTATION = 'C'
+    TYPES={
+        INSPECTION:'New inspection',
+        CONSULTATION:'Consultation'
+    }
+    encounter_type = models.CharField(max_length=1, default=INSPECTION, choices=TYPES)
+    notes = models.TextField(null=True,blank=True)
+    pulse_rate = models.CharField(max_length=255,null=True,blank=True)
+    blood_pressure = models.CharField(max_length=255,null=True,blank=True)
+    body_temperature = models.CharField(max_length=255,null=True,blank=True)
+    respiration_rate = models.CharField(max_length=255,null=True,blank=True)
+    goals = models.TextField(null=True)
+
 
 class Prescription(models.Model):
     date = models.DateField(null=True)

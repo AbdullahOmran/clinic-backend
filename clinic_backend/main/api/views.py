@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
 
 
 
@@ -30,7 +32,10 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_notes(request):
-    return Response('hhhhhhhh')
+# @permission_classes([IsAuthenticated])
+def get_user(request, id):
+    user = User.objects.get(id=id)
+    serializer = UserSerializer(user, many = False)
+    return Response(serializer.data)

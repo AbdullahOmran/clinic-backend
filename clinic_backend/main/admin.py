@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
-from .models import Doctor, Patient,Secretary,Clinic,Appointment
+from .models import (Doctor,
+                    Patient,Secretary,Clinic,
+                    Appointment,WorkingSchedule)
 
 class DoctorAdmin(ModelAdmin):
     list_display = ["id",'username', "age"]
@@ -14,4 +16,7 @@ admin.site.register(Patient)
 admin.site.register(Clinic)
 admin.site.register(Secretary)
 admin.site.register(Appointment)
-
+admin.site.register(WorkingSchedule)
+admin.site.site_header = 'Medcy Administration'
+admin.site.site_title = 'Medcy Administration'
+admin.site.site_url = 'http://localhost:3000/'

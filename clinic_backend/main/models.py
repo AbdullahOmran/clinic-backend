@@ -198,3 +198,26 @@ class Appointment(models.Model):
     status = models.CharField(max_length=255, default=SCHEDULED, choices=STATUS)
     appointment_type = models.CharField(max_length=255, default=INSPECTION, choices=TYPES)
     notes = models.TextField(null = True,blank=True)
+
+class WorkingSchedule(models.Model):
+    SATURDAY = 'SAT'
+    SUNDAY = 'SUN'
+    MONDAY = 'MON'
+    TUESDAY = 'TUE'
+    WEDNESDAY = 'WED'
+    THURSDAY = 'THU'
+    FRIDAY = 'FRI'
+    DAYS={
+        SATURDAY:'SAT',
+        SUNDAY:'SUN',
+        MONDAY:'MON',
+        TUESDAY:'TUE',
+        WEDNESDAY:'WED',
+        THURSDAY:'THU',
+        FRIDAY:'FRI',
+    }
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True,blank=True)
+    secretary = models.ForeignKey(Secretary, on_delete=models.SET_NULL, null=True,blank=True)
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
+    day = models.CharField(max_length=3,choices=DAYS,null=True)

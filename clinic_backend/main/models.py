@@ -245,6 +245,14 @@ class Prescription(models.Model):
     width = models.PositiveIntegerField(default=210)
     height = models.PositiveIntegerField(default=297)
     background_image = models.ImageField(upload_to='images/prescriptions/',null=True,blank=True)
+
+@receiver(pre_delete, sender=Prescription)
+def delete_image(sender, instance, **kwargs):
+    # Before deleting the record, delete the associated image file
+    if instance.background_image:
+        if os.path.isfile(instance.background_image.path):
+            os.remove(instance.background_image.path)
+
 class MedicationsStore(models.Model):
     class Meta:
         verbose_name = "medication"
@@ -260,6 +268,14 @@ class MedicationsStore(models.Model):
     name = models.CharField(max_length=255, null=True)
     route = models.CharField(max_length=1, default=OTHER, choices=ROUTES)
     image = models.ImageField(upload_to='images/medications/',null=True,blank=True)
+
+@receiver(pre_delete, sender=MedicationsStore)
+def delete_image(sender, instance, **kwargs):
+    # Before deleting the record, delete the associated image file
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
+
 
 class Medication(models.Model):
     medication = models.OneToOneField(MedicationsStore, on_delete=models.SET_NULL, null=True)

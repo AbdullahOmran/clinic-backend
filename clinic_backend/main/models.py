@@ -194,6 +194,7 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
     secretary = models.ForeignKey(Secretary, on_delete=models.SET_NULL, null=True)
     patient = models.ForeignKey(Patient, on_delete=models.SET_NULL,null=True)
+    encounter = models.OneToOneField('Encounter', on_delete=models.SET_NULL, null=True)
     date = models.DateField(null=True)
     time = models.TimeField(null=True)
     status = models.CharField(max_length=255, default=SCHEDULED, choices=STATUS)
@@ -237,6 +238,7 @@ class Encounter(models.Model):
     body_temperature = models.CharField(max_length=255,null=True,blank=True)
     respiration_rate = models.CharField(max_length=255,null=True,blank=True)
     goals = models.TextField(null=True)
+    treatment = models.ForeignKey('Treatment',on_delete=models.CASCADE, null=True)
 
 
 class Prescription(models.Model):
@@ -282,6 +284,17 @@ class Medication(models.Model):
     dosage = models.CharField(max_length=255,null=True)
     frequency = models.CharField(max_length=255,null=True)
     duration = models.CharField(max_length=255,null=True)
+    encounter = models.ForeignKey('Encounter',on_delete=models.CASCADE, null=True)
 
 class Treatment(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL,null=True)
+    date = models.DateField(null=True)
+
+class SymptomDiagnosisPair(models.Model):
+    treatment = models.ForeignKey(Treatment, null=True, on_delete=models.SET_NULL)
+    symptom = models.CharField(max_length=255,null=True)
+    diagnosis = models.CharField(max_length=255,null=True)
+
+class Settings(models.Model):
     pass

@@ -4,7 +4,7 @@ from .models import (Doctor,
                     Patient,Secretary,Clinic,
                     Appointment,WorkingSchedule,Prescription,
                     Encounter,Medication,Treatment,
-                    MedicationsStore,
+                    MedicationsStore,SymptomDiagnosisPair
                     )
 
 class DoctorAdmin(ModelAdmin):
@@ -25,6 +25,7 @@ admin.site.register(Prescription)
 admin.site.register(Medication)
 admin.site.register(MedicationsStore)
 admin.site.register(Treatment)
+admin.site.register(SymptomDiagnosisPair)
 admin.site.site_header = 'Medcy Administration'
 admin.site.site_title = 'Medcy Administration'
 admin.site.site_url = 'http://localhost:3000/'

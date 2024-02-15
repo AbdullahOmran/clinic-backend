@@ -35,7 +35,7 @@ def getRoutes(request):
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def user_details(request, pk):
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many = False)

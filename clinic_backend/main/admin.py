@@ -9,7 +9,7 @@ from .models import (Doctor,
 
 class DoctorAdmin(ModelAdmin):
     list_display = ["id",'username', "age"]
-
+    
     @admin.display(empty_value="???")
     def username(self, instance):
         return instance.user.username

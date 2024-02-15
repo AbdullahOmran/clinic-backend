@@ -22,20 +22,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # get the clinic corresponding to that user
         
         doctors = Doctor.objects.filter(user__id = user.id)
-        secretaries = Secretary.objects.filter(user__id = user.id)
-        clinics = QuerySet().none()
         if doctors.count()==0:
-            secretaries = Secretary.objects.filter(user = user.id)
+            secretaries = Secretary.objects.filter(user__id = user.id)
 
         if doctors.count()>0:
-            clinics = Clinic.objects.filter(doctor = doctors[0].id)
             token['doctor_id'] = doctors[0].id
+            token['clinic_name'] = doctors[0].clinic.name if doctors[0].clinic is not None else 'No Clinic'
         elif secretaries.count()>0:
-            clinics = Clinic.objects.filter(secretary = secretaries[0].id)
             token['secretary_id'] = secretaries[0].id
-        
-        if clinics.count()>0:
-            token['clinic_id'] = clinics[0].id
+            token['clinic_name'] = secretaries[0].clinic.name if secretaries[0].clinic is not None else 'No Clinic'
         
         # ...
         return token

@@ -19,6 +19,7 @@ class Doctor(models.Model):
         MALE: 'Male',
         FEMALE: 'Female',
     }
+    clinic = models.ForeignKey('Clinic',on_delete=models.SET_NULL,null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     gender = models.CharField(max_length =1, choices=GENDER, default=MALE)
     address = models.CharField(max_length=255, null =True, blank =True)
@@ -30,6 +31,7 @@ class Doctor(models.Model):
     image = models.ImageField(upload_to='images/doctors/',null=True, blank =True)
     is_retired = models.BooleanField(default = False)
     is_on_vacation = models.BooleanField(default = False)
+    
 
     @property
     def age(self):
@@ -83,7 +85,7 @@ class Patient(models.Model):
      SINGLE:'Single',
      MARRIED:'Married',
     }
-    # id = models.UUIDField(default=uuid.uuid4,primary_key=True,editable=False)
+    
     first_name = models.CharField(max_length=255,null=True)
     last_name = models.CharField(max_length=255,null=True)
     gender = models.CharField(max_length =1, choices=GENDER, default=MALE)
@@ -134,6 +136,7 @@ class Secretary(models.Model):
         FEMALE: 'Female',
     }
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    clinic = models.ForeignKey('Clinic',on_delete=models.SET_NULL,null=True)
     gender = models.CharField(max_length =1, choices=GENDER, default=MALE)
     address = models.CharField(max_length=255, null =True, blank =True)
     education = models.TextField(null=True, blank =True)
@@ -171,8 +174,7 @@ class Clinic(models.Model):
     city = models.CharField(max_length=255, null =True)
     state = models.CharField(max_length=255, null =True)
     contact_number = models.CharField(max_length=20,null=True)
-    doctor = models.ManyToManyField(Doctor)
-    Secretary = models.ManyToManyField(Secretary)
+   
 
 class Appointment(models.Model):
     PENDING= 'P'

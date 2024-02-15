@@ -7,7 +7,7 @@ from ..models import (
      WorkingSchedule, Prescription, Encounter, 
      SymptomDiagnosisPair, Clinic, Settings,
 )
-from django.db.models import Q
+from django.db.models import Q,QuerySet
 
 
 
@@ -22,21 +22,20 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # get the clinic corresponding to that user
         
         doctors = Doctor.objects.filter(user__id = user.id)
-        
         secretaries = Secretary.objects.filter(user__id = user.id)
-        clinics = None
+        clinics = QuerySet().none()
         if doctors.count()==0:
             secretaries = Secretary.objects.filter(user = user.id)
 
         if doctors.count()>0:
             clinics = Clinic.objects.filter(doctor = doctors[0].id)
+            token['doctor_id'] = doctors[0].id
         elif secretaries.count()>0:
             clinics = Clinic.objects.filter(secretary = secretaries[0].id)
+            token['secretary_id'] = secretaries[0].id
         
-        if clinics is not None:
-            token['clinic'] = clinics[0].id if clinics.count()>0 else -1
-        else:
-            token['clinic'] = -1
+        if clinics.count()>0:
+            token['clinic_id'] = clinics[0].id
         
         # ...
         return token

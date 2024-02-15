@@ -83,7 +83,7 @@ class Patient(models.Model):
      SINGLE:'Single',
      MARRIED:'Married',
     }
-    id = models.UUIDField(default=uuid.uuid4,primary_key=True,editable=False)
+    # id = models.UUIDField(default=uuid.uuid4,primary_key=True,editable=False)
     first_name = models.CharField(max_length=255,null=True)
     last_name = models.CharField(max_length=255,null=True)
     gender = models.CharField(max_length =1, choices=GENDER, default=MALE)

@@ -4,10 +4,7 @@ import datetime
 import uuid
 from django.dispatch.dispatcher import receiver
 from django.db.models.signals import pre_delete
-import os
-
-
-
+import os 
 
 
 
@@ -300,3 +297,7 @@ class SymptomDiagnosisPair(models.Model):
 
 class Settings(models.Model):
     pass
+
+class ClinicUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, null=True)

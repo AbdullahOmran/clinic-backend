@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import AccessToken
+from .utils import get_payload
 
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -39,9 +39,6 @@ def getRoutes(request):
 def user_details(request, pk):
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many = False)
-    access_token = request.headers.get('Authorization')[7:]
-    decoded_token = AccessToken(access_token).payload
-    print(decoded_token)
     return Response(serializer.data)
 
 @api_view(['GET'])

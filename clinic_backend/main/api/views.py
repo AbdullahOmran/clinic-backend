@@ -36,21 +36,21 @@ def getRoutes(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_details(request, pk):
+def user_details(request):
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many = False)
     return Response(serializer.data)
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-def doctor_details(request, pk):
+def doctor_details(request):
     doctor = Doctor.objects.get(id=pk)
     serializer = DoctorSerializer(doctor, many = False)
     return Response(serializer.data)
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-def secretary_details(request, pk):
+def secretary_details(request):
     secretary = Secretary.objects.get(id=pk)
     serializer = SecretarySerializer(secretary, many = False)
     return Response(serializer.data)

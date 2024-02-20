@@ -37,23 +37,56 @@ def getRoutes(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_details(request):
-    user = User.objects.get(id=pk)
+    user = request.user
     serializer = UserSerializer(user, many = False)
     return Response(serializer.data)
 
-@api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
 def doctor_details(request):
-    doctor = Doctor.objects.get(id=pk)
-    serializer = DoctorSerializer(doctor, many = False)
-    return Response(serializer.data)
+    doctor = None
+    try:
+        doctor = Doctor.objects.get(user = request.user)
+    except Doctor.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+    if request.method == 'GET':
+        serializer = DoctorSerializer(doctor, many = False)
+        return Response(serializer.data)
+    
+    elif request.method == 'PUT':
+        serializer = DoctorSerializer(doctor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
 def secretary_details(request):
-    secretary = Secretary.objects.get(id=pk)
-    serializer = SecretarySerializer(secretary, many = False)
-    return Response(serializer.data)
+    secretary = None
+    try:
+        secretary = Secretary.objects.get(user = request.user)
+    except Secretary.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = SecretarySerializer(secretary, many = False)
+        return Response(serializer.data)
+    
+    elif request.method == 'PUT':
+        serializer = SecretarySerializer(secretary, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 @api_view(['GET'])

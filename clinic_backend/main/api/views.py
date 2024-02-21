@@ -41,7 +41,7 @@ def user_details(request):
     serializer = UserSerializer(user, many = False)
     return Response(serializer.data)
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def doctor_details(request):
     doctor = None
@@ -54,8 +54,8 @@ def doctor_details(request):
         serializer = DoctorSerializer(doctor, many = False)
         return Response(serializer.data)
     
-    elif request.method == 'PUT':
-        serializer = DoctorSerializer(doctor, data=request.data)
+    elif request.method == 'PATCH':
+        serializer = DoctorSerializer(doctor, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -63,7 +63,7 @@ def doctor_details(request):
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def secretary_details(request):
     secretary = None
@@ -76,8 +76,8 @@ def secretary_details(request):
         serializer = SecretarySerializer(secretary, many = False)
         return Response(serializer.data)
     
-    elif request.method == 'PUT':
-        serializer = SecretarySerializer(secretary, data=request.data)
+    elif request.method == 'PATCH':
+        serializer = SecretarySerializer(secretary, data=request.data, partial = True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

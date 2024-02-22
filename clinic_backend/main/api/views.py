@@ -96,6 +96,20 @@ def patient_details(request, pk):
     patient =  None
     try:
         patient = Patient.objects.get(id=pk)
+        doctors = Doctor.objects.filter(user = request.user)
+        secretaries = Secretary.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            appointments = Appointment.objects.filter(patient=patient, doctor = doctor)
+            if appointments.count() == 0:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+    
+        if secretaries.count()>0:
+            secretary = secretaries[0]
+            appointments = Appointment.objects.filter(patient=patient, secretary = secretary)
+            if appointments.count() == 0:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
     except Patient.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     

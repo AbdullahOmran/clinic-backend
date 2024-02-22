@@ -190,12 +190,12 @@ class Appointment(models.Model):
      REJECTED: 'Rejected',
      SCHEDULED: 'Scheduled',
     }
-    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
-    secretary = models.ForeignKey(Secretary, on_delete=models.SET_NULL, null=True)
-    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL,null=True)
-    encounter = models.OneToOneField('Encounter', on_delete=models.SET_NULL, null=True)
-    date = models.DateField(null=True)
-    time = models.TimeField(null=True)
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+    secretary = models.ForeignKey(Secretary, on_delete=models.SET_NULL, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL,null=True, blank=True)
+    encounter = models.OneToOneField('Encounter', on_delete=models.SET_NULL, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
     status = models.CharField(max_length=255, default=SCHEDULED, choices=STATUS)
     appointment_type = models.CharField(max_length=255, default=INSPECTION, choices=TYPES)
     notes = models.TextField(null = True,blank=True)
@@ -236,7 +236,7 @@ class Encounter(models.Model):
     blood_pressure = models.CharField(max_length=255,null=True,blank=True)
     body_temperature = models.CharField(max_length=255,null=True,blank=True)
     respiration_rate = models.CharField(max_length=255,null=True,blank=True)
-    goals = models.TextField(null=True)
+    goals = models.TextField(null=True, blank=True)
     treatment = models.ForeignKey('Treatment',on_delete=models.CASCADE, null=True)
 
 

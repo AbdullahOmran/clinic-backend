@@ -59,6 +59,13 @@ class PatientSerializer(serializers.ModelSerializer):
         model = Patient
         fields = '__all__'
 
+    def validate(self,data):
+        if not data['first_name']:
+            raise serializers.ValidationError('err')
+        return data
+    
+    
+
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment

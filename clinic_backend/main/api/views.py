@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import status
 from .utils import get_payload
 
 from django.http import JsonResponse
@@ -89,12 +90,35 @@ def secretary_details(request):
 
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH','DELETE','PUT'])
 # @permission_classes([IsAuthenticated])
 def patient_details(request, pk):
-    patient = Patient.objects.get(id=pk)
-    serializer = PatientSerializer(patient, many = False)
-    return Response(serializer.data)
+    patient =  None
+    try:
+        patient = Patient.objects.get(id=pk)
+    except Patient.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = PatientSerializer(patient, many = False)
+        return Response(serializer.data)
+    elif request.method == 'PATCH':
+        serializer = PatientSerializer(patient,data = request.data, many = False, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        patient.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        serializer = PatientSerializer(patient,data = request.data, many = False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])

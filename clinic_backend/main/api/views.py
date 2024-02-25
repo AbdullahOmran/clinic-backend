@@ -87,7 +87,15 @@ def secretary_details(request):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@api_view(['POST'])
+#@permission_classes([IsAuthenticated])
+def create_patient(request):
+    serializer = PatientSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PATCH','DELETE','PUT'])
@@ -134,12 +142,62 @@ def patient_details(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['POST'])
+#@permission_classes([IsAuthenticated])
+def create_appointment(request):
+    serializer = AppointmentSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PATCH','DELETE','PUT'])
 # @permission_classes([IsAuthenticated])
 def appointment_details(request, pk):
-    appointment = Appointment.objects.get(id=pk)
-    serializer = AppointmentSerializer(appointment, many = False)
-    return Response(serializer.data)
+    appointment =  None
+    try:
+        patient = Patient.objects.get(id=pk)
+        doctors = Doctor.objects.filter(user = request.user)
+        secretaries = Secretary.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            appointments = Appointment.objects.filter(patient=patient, doctor = doctor)
+            if appointments.count() == 0:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+    
+        if secretaries.count()>0:
+            secretary = secretaries[0]
+            appointments = Appointment.objects.filter(patient=patient, secretary = secretary)
+            if appointments.count() == 0:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
+    except Patient.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = PatientSerializer(patient, many = False)
+        return Response(serializer.data)
+    elif request.method == 'PATCH':
+        serializer = PatientSerializer(patient,data = request.data, many = False, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        patient.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        serializer = PatientSerializer(patient,data = request.data, many = False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 # @api_view(['GET'])
 # # @permission_classes([IsAuthenticated])

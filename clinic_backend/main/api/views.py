@@ -161,7 +161,6 @@ def create_or_appointment_list(request):
             serializer = AppointmentSerializer(appointments, many = True)
             return Response(serializer.data)
             
-    
         if secretaries.count()>0:
             secretary = secretaries[0]
             appointments = Appointment.objects.filter(secretary = secretary)

@@ -71,3 +71,18 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointment
         fields = '__all__'
 
+class TreatmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Treatment
+        fields = '__all__'
+
+class EncounterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Encounter
+        fields = '__all__'
+
+class MedicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medication
+        fields = '__all__'
+

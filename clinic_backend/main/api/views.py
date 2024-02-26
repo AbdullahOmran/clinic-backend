@@ -242,3 +242,23 @@ def treatment_details(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST', 'GET'])
+#@permission_classes([IsAuthenticated])
+def create_or_treatment_list(request):
+    if request.method == 'POST':
+        serializer = Treatment(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        doctors = Doctor.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            treatments = Treatment.objects.filter( doctor = doctor)
+            serializer = TreatmentSerializer(treatments, many = True)
+            return Response(serializer.data)
+            
+        
+            

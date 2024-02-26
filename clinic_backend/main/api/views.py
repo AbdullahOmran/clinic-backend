@@ -18,7 +18,7 @@ from ..models import (
 from .serializers import (
     UserSerializer, MyTokenObtainPairSerializer,DoctorSerializer,
     SecretarySerializer, PatientSerializer,AppointmentSerializer,
-    ClinicSerializer,
+    ClinicSerializer,TreatmentSerializer
 )
 
 
@@ -142,7 +142,7 @@ def patient_details(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 #@permission_classes([IsAuthenticated])
 def create_or_appointment_list(request):
     if request.method == 'POST':
@@ -209,4 +209,36 @@ def clinic_details(request, pk):
     clinic = Clinic.objects.get(id=pk)
     serializer = ClinicSerializer(clinic, many = False)
     return Response(serializer.data)
+
+
+@api_view(['GET', 'PATCH','DELETE','PUT'])
+# @permission_classes([IsAuthenticated])
+def treatment_details(request, pk):
+    treatment =  None
+    try:
+        treatment = Treatment.objects.get(id=pk)
+        
+    except Treatment.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = TreatmentSerializer(treatment, many = False)
+        return Response(serializer.data)
+    elif request.method == 'PATCH':
+        serializer = TreatmentSerializer(treatment,data = request.data, many = False, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        treatment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        serializer = TreatmentSerializer(treatment,data = request.data, many = False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 

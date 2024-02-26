@@ -203,9 +203,10 @@ def appointment_details(request, pk):
 
 
 
-# @api_view(['GET'])
-# # @permission_classes([IsAuthenticated])
-# def clinic_details(request, pk):
-#     clinic = Clinic.objects.get(id=pk)
-#     serializer = ClinicSerializer(clinic, many = False)
-#     return Response(serializer.data)
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def clinic_details(request, pk):
+    clinic = Clinic.objects.get(id=pk)
+    serializer = ClinicSerializer(clinic, many = False)
+    return Response(serializer.data)
+

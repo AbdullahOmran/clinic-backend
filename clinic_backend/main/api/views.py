@@ -18,7 +18,8 @@ from ..models import (
 from .serializers import (
     UserSerializer, MyTokenObtainPairSerializer,DoctorSerializer,
     SecretarySerializer, PatientSerializer,AppointmentSerializer,
-    ClinicSerializer,TreatmentSerializer
+    ClinicSerializer,TreatmentSerializer,EncounterSerializer,
+
 )
 
 
@@ -260,5 +261,55 @@ def create_or_treatment_list(request):
             serializer = TreatmentSerializer(treatments, many = True)
             return Response(serializer.data)
             
+
+@api_view(['GET', 'PATCH','DELETE','PUT'])
+# @permission_classes([IsAuthenticated])
+def encounter_details(request, pk):
+    encounter =  None
+    try:
+        encounter = Encounter.objects.get(id=pk)
         
+    except Encounter.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = EncounterSerializer(encounter, many = False)
+        return Response(serializer.data)
+    elif request.method == 'PATCH':
+        serializer = EncounterSerializer(treatment,data = request.data, many = False, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        encounter.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        serializer = EncounterSerializer(encounter,data = request.data, many = False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST', 'GET'])
+#@permission_classes([IsAuthenticated])
+def create_or_encounter_list(request):
+    if request.method == 'POST':
+        serializer = Encounter(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        doctors = Doctor.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            treatments = Treatment.objects.filter( doctor = doctor)
             
+            serializer = TreatmentSerializer(treatments, many = True)
+            return Response(serializer.data)
+                   

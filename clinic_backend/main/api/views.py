@@ -88,16 +88,20 @@ def secretary_details(request):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 #@permission_classes([IsAuthenticated])
-def create_patient(request):
-    print(request.data)
-    serializer = PatientSerializer(data = request.data)
-    if serializer.is_valid():
-        serializer.save()
+def create_or_patient_list(request):
+    if request.method == 'POST':
+        serializer = PatientSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        patients = Patient.objects.all()
+        serializer = PatientSerializer(patients, many = True)
         return Response(serializer.data)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PATCH','DELETE','PUT'])
@@ -106,19 +110,19 @@ def patient_details(request, pk):
     patient =  None
     try:
         patient = Patient.objects.get(id=pk)
-        doctors = Doctor.objects.filter(user = request.user)
-        secretaries = Secretary.objects.filter(user = request.user)
-        if doctors.count() > 0:
-            doctor = doctors[0]
-            appointments = Appointment.objects.filter(patient=patient, doctor = doctor)
-            if appointments.count() == 0:
-                return Response(status=status.HTTP_403_FORBIDDEN)
+        # doctors = Doctor.objects.filter(user = request.user)
+        # secretaries = Secretary.objects.filter(user = request.user)
+        # if doctors.count() > 0:
+        #     doctor = doctors[0]
+        #     appointments = Appointment.objects.filter(patient=patient, doctor = doctor)
+        #     if appointments.count() == 0:
+        #         return Response(status=status.HTTP_403_FORBIDDEN)
     
-        if secretaries.count()>0:
-            secretary = secretaries[0]
-            appointments = Appointment.objects.filter(patient=patient, secretary = secretary)
-            if appointments.count() == 0:
-                return Response(status=status.HTTP_403_FORBIDDEN)
+        # if secretaries.count()>0:
+        #     secretary = secretaries[0]
+        #     appointments = Appointment.objects.filter(patient=patient, secretary = secretary)
+        #     if appointments.count() == 0:
+        #         return Response(status=status.HTTP_403_FORBIDDEN)
 
     except Patient.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)

@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from .utils import get_payload
-
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from ..models import (
@@ -150,13 +151,16 @@ def patient_details(request, pk):
 
 @api_view(['POST', 'GET'])
 #@permission_classes([IsAuthenticated])
+
 def create_or_appointment_list(request):
     if request.method == 'POST':
+        print(request.data)
         serializer = AppointmentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
+           
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
         doctors = Doctor.objects.filter(user = request.user)

@@ -91,6 +91,7 @@ def secretary_details(request):
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
 def create_patient(request):
+    print(request.data)
     serializer = PatientSerializer(data = request.data)
     if serializer.is_valid():
         serializer.save()

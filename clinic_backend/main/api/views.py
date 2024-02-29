@@ -154,7 +154,7 @@ def patient_details(request, pk):
 
 def create_or_appointment_list(request):
     if request.method == 'POST':
-        print(request.data)
+        
         serializer = AppointmentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()

@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework_simplejwt.views import TokenRefreshView 
 from .views import MyTokenObtainPairView
+from .views import Register
 
 from rest_framework_swagger.views import get_swagger_view
 from drf_yasg.views import get_schema_view
@@ -20,7 +21,7 @@ urlpatterns = [
     # path('', views.getRoutes),
     path('auth/login/', MyTokenObtainPairView.as_view(), name = 'token_obtain_pair'),
     path('auth/refresh/', TokenRefreshView.as_view(), name = 'token_refresh'),
-    # path('auth/register/', TokenRefreshView.as_view(), name = 'token_refresh'),
+    path('auth/register/', Register.as_view(), name = 'auth-register'),
     path('user/',views.user_details),
     path('doctor/',views.doctor_details),
     path('secretary/',views.secretary_details),

@@ -8,6 +8,7 @@ from .utils import get_payload
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
+from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from ..models import (
     Doctor, Secretary, Patient, Appointment,
@@ -96,7 +97,7 @@ def create_or_patient_list(request):
         serializer = PatientSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
@@ -158,7 +159,7 @@ def create_or_appointment_list(request):
         serializer = AppointmentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
            
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -259,7 +260,7 @@ def create_or_treatment_list(request):
         serializer = Treatment(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
@@ -310,7 +311,7 @@ def create_or_encounter_list(request):
         serializer = EncounterSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
@@ -363,7 +364,7 @@ def create_or_medication_list(request):
         serializer = MedicationSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
@@ -375,3 +376,10 @@ def create_or_medication_list(request):
             medications = Medication.objects.filter(encounter__in = encounters)
             serializer = MedicationSerializer(medications, many = True)
             return Response(serializer.data)
+class Register(APIView):
+
+    def post(self, request):
+        serializer = UserSerializer(data= request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)

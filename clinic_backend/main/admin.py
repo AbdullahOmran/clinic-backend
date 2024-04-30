@@ -5,7 +5,7 @@ from .models import (Doctor,
                     Appointment,WorkingSchedule,Prescription,
                     Encounter,Medication,Treatment,
                     MedicationsStore,SymptomDiagnosisPair,
-                    ClinicUser,
+                    ClinicUser,BufferTime, AppointmentSettings, ClinicAvailability
                     )
 from django.contrib.auth.models import User                  
 from django.contrib.auth.admin import UserAdmin
@@ -64,6 +64,9 @@ admin.site.register(MedicationsStore)
 admin.site.register(Treatment)
 admin.site.register(SymptomDiagnosisPair)
 admin.site.register(ClinicUser)
+admin.site.register(ClinicAvailability)
+admin.site.register(BufferTime)
+admin.site.register(AppointmentSettings)
 admin.site.site_header = 'Medcy Administration'
 admin.site.site_title = 'Medcy Administration'
 admin.site.site_url = 'http://localhost:3000/'

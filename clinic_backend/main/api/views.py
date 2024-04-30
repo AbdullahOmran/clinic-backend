@@ -376,6 +376,7 @@ def create_or_medication_list(request):
             medications = Medication.objects.filter(encounter__in = encounters)
             serializer = MedicationSerializer(medications, many = True)
             return Response(serializer.data)
+
 class Register(APIView):
 
     def post(self, request):

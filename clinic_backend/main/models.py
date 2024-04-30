@@ -7,7 +7,6 @@ from django.db.models.signals import pre_delete
 import os 
 
 
-
 # Create your models here.
 class Doctor(models.Model):
     MALE = 'M'
@@ -171,6 +170,9 @@ class Clinic(models.Model):
     city = models.CharField(max_length=255, null =True)
     state = models.CharField(max_length=255, null =True)
     contact_number = models.CharField(max_length=20,null=True)
+    availability = models.ForeignKey("ClinicAvailability",null=True,on_delete=models.SET_NULL)
+    buffer_time = models.ForeignKey("BufferTime",null=True,on_delete=models.SET_NULL)
+
    
 
 class Appointment(models.Model):
@@ -295,9 +297,25 @@ class SymptomDiagnosisPair(models.Model):
     symptom = models.CharField(max_length=255,null=True)
     diagnosis = models.CharField(max_length=255,null=True)
 
-class Settings(models.Model):
-    pass
 
 class ClinicUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, null=True)
+
+class Settings(models.Model):
+    pass
+
+class AppointmentSettings(models.Model):
+    duration  = models.IntegerField(help_text="the duration of the appointment", default=15)
+    max_appointments = models.IntegerField(help_text="the maximum number of appointments",default=2)
+    
+
+class BufferTime(models.Model):
+    appointment = models.ForeignKey(AppointmentSettings,on_delete=models.CASCADE) 
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+class ClinicAvailability(models.Model):
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
+    days = models.CharField(null=True, max_length=80,blank=True)

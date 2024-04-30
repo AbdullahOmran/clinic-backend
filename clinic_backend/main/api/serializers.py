@@ -6,6 +6,7 @@ from ..models import (
      MedicationsStore, Medication, Treatment, 
      WorkingSchedule, Prescription, Encounter, 
      SymptomDiagnosisPair, Clinic, Settings,
+     AppointmentSettings, BufferTime, ClinicAvailability
 )
 from django.db.models import Q,QuerySet
 
@@ -85,6 +86,23 @@ class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medication
         fields = '__all__'
+
+class AppointmentSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppointmentSettings
+        fields = '__all__'
+    
+class BufferTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BufferTime
+        fields = '__all__'
+    
+class ClinicAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClinicAvailability
+        fields = '__all__'
+    
+
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -92,6 +92,7 @@ class AppointmentSettingsSerializer(serializers.ModelSerializer):
         model = AppointmentSettings
         fields = '__all__'
     
+    
 class BufferTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = BufferTime

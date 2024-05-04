@@ -14,14 +14,16 @@ from ..models import (
     Doctor, Secretary, Patient, Appointment,
      MedicationsStore, Medication, Treatment, 
      WorkingSchedule, Prescription, Encounter, 
-     SymptomDiagnosisPair, Clinic, Settings,
+     SymptomDiagnosisPair, Clinic, Settings,ClinicUser,AppointmentSettings,
+     BufferTime,
 )
 
 from .serializers import (
     UserSerializer, MyTokenObtainPairSerializer,DoctorSerializer,
     SecretarySerializer, PatientSerializer,AppointmentSerializer,
     ClinicSerializer,TreatmentSerializer,EncounterSerializer,
-    MedicationSerializer,
+    MedicationSerializer,AppointmentSettingsSerializer, ClinicAvailabilitySerializer,
+    BufferTimeSerializer,
 )
 
 
@@ -376,6 +378,89 @@ def create_or_medication_list(request):
             medications = Medication.objects.filter(encounter__in = encounters)
             serializer = MedicationSerializer(medications, many = True)
             return Response(serializer.data)
+
+class AppointmentSettingsView(APIView):
+    def post(self, request):
+        serializer = AppointmentSettingsSerializer(data = request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            clinic_user_details = ClinicUser.objects.get(user = request.user)
+            clinic_user_details.clinic.appointment_settings = instance
+            clinic_user_details.clinic.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self,request):
+        clinic_user_details = ClinicUser.objects.get(user = request.user)
+        appointment_settings_details = clinic_user_details.clinic.appointment_settings
+        serializer = AppointmentSettingsSerializer(appointment_settings_details,data = request.data, many = False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self,request):
+        clinic_user_details = ClinicUser.objects.get(user = request.user)
+        appointment_settings_details = clinic_user_details.clinic.appointment_settings
+        serializer = AppointmentSettingsSerializer(appointment_settings_details, many = False)
+        return Response(serializer.data)
+
+class ClinicAvailabilityView(APIView):
+
+    def post(self, request):
+        serializer = ClinicAvailabilitySerializer(data = request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            clinic_user_details = ClinicUser.objects.get(user = request.user)
+            clinic_user_details.clinic.availability = instance
+            clinic_user_details.clinic.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        clinic_user_details = ClinicUser.objects.get(user = request.user)
+        availability_details = clinic_user_details.clinic.availability
+        serializer = ClinicAvailabilitySerializer(availability_details,data = request.data, many = False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        availability_details = ClinicUser.objects.get(user = request.user)
+        availability_details = availability_details.clinic.availability
+        serializer = ClinicAvailabilitySerializer(availability_details, many = False)
+        return Response(serializer.data)
+class BufferTimeView(APIView):
+    def post(self, request):
+        serializer = BufferTimeSerializer(data = request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        serializer = BufferTimeSerializer(data = request.data, many=True)
+        if serializer.is_valid():
+            clinic_user_details = ClinicUser.objects.get(user = request.user)
+            appointment_settings_details = clinic_user_details.clinic.appointment_settings
+            buffer_times = BufferTime.objects.filter(appointment = appointment_settings_details)
+            buffer_times.delete()
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        clinic_user_details = ClinicUser.objects.get(user = request.user)
+        appointment_settings_details = clinic_user_details.clinic.appointment_settings
+        buffer_times = BufferTime.objects.filter(appointment = appointment_settings_details)
+        serializer = BufferTimeSerializer(buffer_times, many = True)
+        return Response(serializer.data)
 
 class Register(APIView):
 

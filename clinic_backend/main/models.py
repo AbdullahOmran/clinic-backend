@@ -172,6 +172,7 @@ class Clinic(models.Model):
     contact_number = models.CharField(max_length=20,null=True)
     availability = models.ForeignKey("ClinicAvailability",null=True,on_delete=models.SET_NULL)
     buffer_time = models.ForeignKey("BufferTime",null=True,on_delete=models.SET_NULL)
+    appointment_settings = models.ForeignKey("AppointmentSettings",null=True,on_delete=models.SET_NULL)
 
    
 
@@ -312,8 +313,8 @@ class AppointmentSettings(models.Model):
 
 class BufferTime(models.Model):
     appointment = models.ForeignKey(AppointmentSettings,on_delete=models.CASCADE) 
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
 
 class ClinicAvailability(models.Model):
     start_time = models.TimeField(null=True)

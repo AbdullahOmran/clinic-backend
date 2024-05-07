@@ -450,7 +450,11 @@ class BufferTimeView(APIView):
             appointment_settings_details = clinic_user_details.clinic.appointment_settings
             buffer_times = BufferTime.objects.filter(appointment = appointment_settings_details)
             buffer_times.delete()
-            serializer.save()
+            instances = serializer.save()
+            for instance in instances:
+                instance.appointment = appointment_settings_details
+                instance.save()
+            
             return Response(serializer.data, status = status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

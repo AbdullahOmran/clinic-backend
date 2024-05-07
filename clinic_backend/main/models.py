@@ -312,7 +312,7 @@ class AppointmentSettings(models.Model):
     
 
 class BufferTime(models.Model):
-    appointment = models.ForeignKey(AppointmentSettings,on_delete=models.CASCADE) 
+    appointment = models.ForeignKey(AppointmentSettings,on_delete=models.CASCADE, null=True,blank=True) 
     start_time = models.TimeField(null=True)
     end_time = models.TimeField(null=True)
 

@@ -102,6 +102,10 @@ class ClinicAvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = ClinicAvailability
         fields = '__all__'
+class SymptomDiagnosisPairSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SymptomDiagnosisPair
+        fields = '__all__'
     
 
 

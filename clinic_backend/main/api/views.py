@@ -15,6 +15,7 @@ from ..models import (
      MedicationsStore, Medication, Treatment, 
      WorkingSchedule, Prescription, Encounter, 
      SymptomDiagnosisPair, Clinic, Settings,ClinicUser,AppointmentSettings,
+     
      BufferTime,
 )
 
@@ -23,7 +24,7 @@ from .serializers import (
     SecretarySerializer, PatientSerializer,AppointmentSerializer,
     ClinicSerializer,TreatmentSerializer,EncounterSerializer,
     MedicationSerializer,AppointmentSettingsSerializer, ClinicAvailabilitySerializer,
-    BufferTimeSerializer,
+    BufferTimeSerializer,SymptomDiagnosisPairSerializer,
 )
 
 
@@ -259,7 +260,7 @@ def treatment_details(request, pk):
 #@permission_classes([IsAuthenticated])
 def create_or_treatment_list(request):
     if request.method == 'POST':
-        serializer = Treatment(data = request.data)
+        serializer = TreatmentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status = status.HTTP_201_CREATED)
@@ -271,6 +272,25 @@ def create_or_treatment_list(request):
             doctor = doctors[0]
             treatments = Treatment.objects.filter( doctor = doctor)
             serializer = TreatmentSerializer(treatments, many = True)
+            return Response(serializer.data)
+            
+@api_view(['POST', 'GET'])
+#@permission_classes([IsAuthenticated])
+def create_or_symptom_diagnosis_list(request):
+    if request.method == 'POST':
+        serializer = SymptomDiagnosisPairSerializer(data = request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        doctors = Doctor.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            treatments = Treatment.objects.filter( doctor = doctor)
+            impressions = SymptomDiagnosisPair.objects().filter(treatment in treatments)
+            serializer = SymptomDiagnosisPairSerializer(impressions, many = True)
             return Response(serializer.data)
             
 

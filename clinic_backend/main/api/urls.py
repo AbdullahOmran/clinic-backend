@@ -32,6 +32,8 @@ urlpatterns = [
     path('treatment/<int:pk>/',views.treatment_details),
     path('treatment/',views.create_or_treatment_list),
     path('treatment/symptom-diagnosis/',views.create_or_symptom_diagnosis_list),
+    path('treatment/encounter/',views.create_or_encounter_list),
+    path('encounter/medications/',views.create_or_medication_list),
     path('clinic/<int:pk>/',views.clinic_details),
     path('settings/appointment-settings/',views.AppointmentSettingsView.as_view()),
     path('settings/availability/',views.ClinicAvailabilityView.as_view()),

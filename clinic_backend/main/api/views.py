@@ -94,7 +94,7 @@ def secretary_details(request):
 
 
 @api_view(['POST', 'GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_or_patient_list(request):
     if request.method == 'POST':
         serializer = PatientSerializer(data = request.data)
@@ -110,7 +110,7 @@ def create_or_patient_list(request):
 
 
 @api_view(['GET', 'PATCH','DELETE','PUT'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def patient_details(request, pk):
     patient =  None
     try:
@@ -154,7 +154,7 @@ def patient_details(request, pk):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST', 'GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 
 def create_or_appointment_list(request):
     if request.method == 'POST':
@@ -184,7 +184,7 @@ def create_or_appointment_list(request):
 
 
 @api_view(['GET', 'PATCH','DELETE','PUT'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def appointment_details(request, pk):
     appointment =  None
     try:
@@ -218,7 +218,7 @@ def appointment_details(request, pk):
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def clinic_details(request, pk):
     clinic = Clinic.objects.get(id=pk)
     serializer = ClinicSerializer(clinic, many = False)
@@ -226,7 +226,7 @@ def clinic_details(request, pk):
 
 
 @api_view(['GET', 'PATCH','DELETE','PUT'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def treatment_details(request, pk):
     treatment =  None
     try:
@@ -257,7 +257,7 @@ def treatment_details(request, pk):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST', 'GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_or_treatment_list(request):
     if request.method == 'POST':
         serializer = TreatmentSerializer(data = request.data)
@@ -275,7 +275,7 @@ def create_or_treatment_list(request):
             return Response(serializer.data)
             
 @api_view(['POST', 'GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_or_symptom_diagnosis_list(request):
     if request.method == 'POST':
         serializer = SymptomDiagnosisPairSerializer(data = request.data, many=True)
@@ -291,6 +291,45 @@ def create_or_symptom_diagnosis_list(request):
             treatments = Treatment.objects.filter( doctor = doctor)
             impressions = SymptomDiagnosisPair.objects().filter(treatment in treatments)
             serializer = SymptomDiagnosisPairSerializer(impressions, many = True)
+            return Response(serializer.data)
+            
+@api_view(['POST', 'GET'])
+@permission_classes([IsAuthenticated])
+def create_or_encounter_list(request):
+    if request.method == 'POST':
+        serializer = EncounterSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        doctors = Doctor.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            treatments = Treatment.objects.filter( doctor = doctor)
+            encounters = Encounter.objects().filter(treatment in treatments)
+            serializer = EncounterSerializer(encounters, many = True)
+            return Response(serializer.data)
+            
+@api_view(['POST', 'GET'])
+@permission_classes([IsAuthenticated])
+def create_or_medication_list(request):
+    if request.method == 'POST':
+        serializer = MedicationSerializer(data = request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        doctors = Doctor.objects.filter(user = request.user)
+        if doctors.count() > 0:
+            doctor = doctors[0]
+            treatments = Treatment.objects.filter( doctor = doctor)
+            encounters = Encounter.objects().filter(treatment in treatments)
+            medications = Medication.objects.filter(encounter in encounters)
+            serializer = MedicationSerializer(medications, many = True)
             return Response(serializer.data)
             
 
@@ -327,7 +366,7 @@ def encounter_details(request, pk):
 
 
 @api_view(['POST', 'GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_or_encounter_list(request):
     if request.method == 'POST':
         serializer = EncounterSerializer(data = request.data)
@@ -380,7 +419,7 @@ def medication_details(request, pk):
 
 
 @api_view(['POST', 'GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_or_medication_list(request):
     if request.method == 'POST':
         serializer = MedicationSerializer(data = request.data)
